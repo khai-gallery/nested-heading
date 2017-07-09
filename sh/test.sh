@@ -10,7 +10,7 @@
   )
 ) && (
   printf "Creating HTML files... "
-  pug *.html > stdout.tmp 2> stderr.tmp && (
+  pug *.pug > stdout.tmp 2> stderr.tmp && (
     echo "passed"
   ) || (
     echo "failed" >&2

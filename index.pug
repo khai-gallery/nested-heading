@@ -14,17 +14,11 @@ html(lang = 'en')
         if (begin > end) return range(end, begin)
         return _range(parseInt(begin), parseInt(end))
       }
-      const mkname = (x, y) => `entry-${x}.${y}`
+      const mkname = (x, y) => `entry--${x}-${y}`
       const array = Array.from(range(255))
-    mixin nameda(name)
-      a(name = name): block
-    mixin nest(mixname, level = 0, getargs = () => [])
-      +#{mixname}(...getargs(level))
-        if level > 0
-          +nest(mixname, level - 1, getargs)
-            block
-        else
-          block
+    mixin namedheading(level = 1, ...name)
+      a(class = name): #{'h' + level}
+        block
     h1 Table of Contents
     each x in array
       p(data-x = x): each y in Array.from(range(x))
@@ -34,5 +28,6 @@ html(lang = 'en')
         span | &nbsp;
     h1 Contents
     each x in array
-      +nest('nameda', x, y => [mkname(x, y)])
-        h2 At Line #{x}
+      - const subarray = [...range(x)].map(y => mkname(x, y))
+      +namedheading(2, ...subarray)
+        | At Line #{x}
