@@ -1,0 +1,38 @@
+doctype html
+html(lang = 'en')
+  head
+    meta(charset = 'utf8')
+    title Test Nested Heading
+  body
+    -
+      function * _range (begin, end) {
+        for (let i = begin; i != end; ++i) yield i
+      }
+      function range (begin, end) {
+        if (end === undefined) return range(0, begin)
+        if (isNaN(begin) || isNaN(end)) throw new TypeError('Must be a number')
+        if (begin > end) return range(end, begin)
+        return _range(parseInt(begin), parseInt(end))
+      }
+      const mkname = (x, y) => `entry-${x}.${y}`
+      const array = Array.from(range(255))
+    mixin nameda(name)
+      a(name = name): block
+    mixin nest(mixname, level = 0, getargs = () => [])
+      +#{mixname}(...getargs(level))
+        if level > 0
+          +nest(mixname, level - 1, getargs)
+            block
+        else
+          block
+    h1 Table of Contents
+    each x in array
+      p(data-x = x): each y in Array.from(range(x))
+        - const href = '#' + mkname(x, y)
+        a(href = href, data-y = y, title = `Go to ${href}`)
+          span(data-y = y) #{x}.#{y}
+        span | &nbsp;
+    h1 Contents
+    each x in array
+      +nest('nameda', x, y => [mkname(x, y)])
+        h2 At Line #{x}
